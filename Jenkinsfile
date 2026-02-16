@@ -1,7 +1,7 @@
 pipeline { 
    agent any 
    environment {
-      GIT_REPO = 'YYY'
+      GIT_REPO = 'TallerPruebas'
       GIT_CREDENTIAL_ID = 'ms-GitHub-Credentials-for-jenkins'
       SONARQUBE_URL = 'http://172.24.101.209:8082/sonar-isis2603'
       ARCHID_TOKEN = credentials('archid')

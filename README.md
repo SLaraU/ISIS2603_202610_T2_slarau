@@ -7,7 +7,7 @@ Escenarios Regla 1:
 5. Fallo: El dinero que se quiere mover es menor o igual a 0.
 
 Escenarios Regla 2:
-1. Éxito: Una cuenta existente le transfiere a otra cuenta distinta y existente un monto menor, y distinta de cero, al saldo de la cuenta origen de forma existosa, con ambos saldos actualizados.
+1. Éxito: Una cuenta existente le transfiere a otra cuenta distinta y existente un monto menor, y distinto de cero, al saldo de la cuenta origen de forma existosa, con ambos saldos actualizados.
 2. Fallo: La cuenta origen no existe.
 3. Fallo: la cuenta destino no existe.
 4. Fallo: La cuenta destino es igual a la cuenta origen.
@@ -35,11 +35,37 @@ Regla 1:
     Acción (Input): Mover $500 de cuenta #123 a "Ahorro".
     Resultado Esperado (Output/BD): Lanza Excepción EntityNotFoundException("No existe el bolsillo especificada"). No guarda nada nuevo.
 
-    Escenario: El dinero que se quiere mover es mayor al saldo de la cuenta.
+    Escenario: La cuenta origen transfiere un valor igual o menor a 0.
     Estado Inicial (BD): Existe cuenta #123 con saldo $1000, existe bolsillo "Ahorro".
-    Acción (Input): Mover $1500 de cuenta #123 a "Ahorro".
-    Resultado Esperado (Output/BD): Lanza Excepción: BusinessLogicException("Saldo insuficiente"). No guarda nada nuevo.
+    Acción (Input): Mover -$500 de cuenta #123 a "Ahorro".
+    Resultado Esperado (Output/BD): Lanza Excepción BusinessLogicException("Monto a transferir negativo"). No guarda nada nuevo.
 
+
+Regla 2:
+    Escenario: Una cuenta existente le transfiere a otra cuenta distinta y existente un monto menor, y distinto de cero, al saldo de la cuenta origen de forma existosa, con ambos saldos actualizados.
+    Estado Inicial (BD): Existe cuenta #123 con saldo $1000, existe cuenta #456 con saldo $500.
+    Acción (Input): Mover $500 de cuenta #123 a cuenta #456.
+    Resultado Esperado (Output/BD): Se actualiza en BD los saldos, restando $500 de la cuenta #123 y sumando $500 a la cuenta #456.
+
+    Escenario: La cuenta origen no existe.
+    Estado Inicial (BD): Existe cuenta #456 con saldo $500
+    Acción (Input): Mover $500 de cuenta #123 a cuenta #456.
+    Resultado Esperado (Output/BD): Lanza Excepción EntityNotFoundException("No existe la cuenta origen especificada"). No guarda nada nuevo.
+
+    Escenario: La cuenta destino no existe.
+    Estado Inicial (BD): Existe cuenta #123 con saldo $1000
+    Acción (Input): Mover $500 de cuenta #123 a cuenta #456.
+    Resultado Esperado (Output/BD): Lanza Excepción EntityNotFoundException("No existe la cuenta destino especificada"). No guarda nada nuevo.
+
+    Escenario: La cuenta destino es igual a la cuenta origen.
+    Estado Inicial (BD): Existe la cuenta #123 con saldo $1000.
+    Acción (Input): Mover $500 de cuenta #123 a cuenta #123.
+    Resultado Esperado (Output/BD): Lanza Excepción BusinessLogicException("La cuenta origen es igual a la cuenta destino"). No guarda nada nuevo.
+
+    Escenario: La cuenta origen transfiere un valor igual o menor a 0.
+    Estado Inicial (BD): Existe cuenta #123 con saldo $1000, existe cuenta #456 con saldo $500.
+    Acción (Input): Mover -$500 de cuenta #123 a cuenta #456.
+    Resultado Esperado (Output/BD): Lanza Excepción BusinessLogicException("Monto a transferir negativo"). No guarda nada nuevo.
 
 ## Enlaces de interés
 
